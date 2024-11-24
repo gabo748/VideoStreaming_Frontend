@@ -1,33 +1,27 @@
-import { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-import './App.css';
-import VideoStreaming from './components/VideoStreaming';
-import VideoList from './components/VideoList';
-import { Toaster } from 'react-hot-toast';
+import { useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import VideoStreaming from "./components/VideoStreaming";
+import VideoList from "./components/VideoList";
+import LoginForm from "./components/LoginForm";
+import RegisterForm from "./components/RegisterForm";
+import { Toaster } from "react-hot-toast";
 
 function App() {
-  const [videoId, setVideoId] = useState('');
+  const [videoId, setVideoId] = useState("");
 
   return (
     <Router>
-      <div className="flex flex-col items-center space-y-6 py-6">
-        <h1 className="text-2xl font-bold text-gray-700 dark:text-gray-100">
-          Video Streaming App
-        </h1>
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-800 flex flex-col">
         <Routes>
-          <Route
-            path="/"
-            element={<VideoList onPlay={setVideoId} />}
-          />
-          <Route
-            path="/upload"
-            element={<VideoStreaming />}
-          />
+          <Route path="/" element={<LoginForm />} />
+          <Route path="/register" element={<RegisterForm />} />
+          <Route path="/videos" element={<VideoList onPlay={setVideoId} />} />
+          <Route path="/upload" element={<VideoStreaming />} />
           <Route
             path="/player"
             element={
-              <div>
-                <h2 className="text-lg font-semibold">Playing Video</h2>
+              <div className="flex flex-col items-center justify-center min-h-screen">
+                <h2 className="text-lg font-semibold mb-4">Reproduciendo Video</h2>
                 <video
                   src={`http://localhost:8080/api/v1/videos/stream/${videoId}`}
                   controls

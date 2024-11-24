@@ -1,8 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import VideoLogo from "../assets/video-posting.png";
-import { Alert, Button, Card, Label, Progress, Textarea, TextInput, Select } from 'flowbite-react';
-import axios from 'axios';
-import toast from 'react-hot-toast';
+import {
+  Alert,
+  Button,
+  Card,
+  Label,
+  Progress,
+  Textarea,
+  TextInput,
+  Select,
+} from "flowbite-react";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function VideoStreaming() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -10,46 +19,47 @@ export default function VideoStreaming() {
   const [meta, setMeta] = useState({
     title: "",
     description: "",
-    categoryId: "", // Nueva propiedad para la categoría
+    categoryId: "",
   });
   const [progress, setProgress] = useState(0);
   const [upload, setUpload] = useState(false);
   const [message, setMessage] = useState("");
 
-  // Obtener las categorías del endpoint
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/v1/videos/categories');
+        const response = await axios.get(
+          "http://localhost:8080/api/v1/videos/categories"
+        );
         setCategories(response.data);
       } catch (error) {
-        console.error('Error al obtener las categorías:', error);
+        console.error("Error al obtener las categorías:", error);
       }
     };
     fetchCategories();
   }, []);
 
-  function handleFileChange(event) {
+  const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
-  }
+  };
 
-  function handleFieldChange(event) {
+  const handleFieldChange = (event) => {
     setMeta({
       ...meta,
       [event.target.name]: event.target.value,
     });
-  }
+  };
 
-  function handleSubmit(formEvent) {
+  const handleSubmit = (formEvent) => {
     formEvent.preventDefault();
     if (!selectedFile) {
       alert("Seleccione un archivo");
       return;
     }
     saveVideoToServer(selectedFile, meta);
-  }
+  };
 
-  function resetForm() {
+  const resetForm = () => {
     setMeta({
       title: "",
       description: "",
@@ -57,60 +67,62 @@ export default function VideoStreaming() {
     });
     setSelectedFile(null);
     setUpload(false);
-  }
+  };
 
-  async function saveVideoToServer(video, videoMetaData) {
+  const saveVideoToServer = async (video, videoMetaData) => {
     setUpload(true);
     try {
-      let formData = new FormData();
+      const formData = new FormData();
       formData.append("title", videoMetaData.title);
       formData.append("description", videoMetaData.description);
-      formData.append("categoryId", videoMetaData.categoryId); // Enviar el ID de la categoría
+      formData.append("categoryId", videoMetaData.categoryId);
       formData.append("file", video);
 
-      let response = await axios.post("http://localhost:8080/api/v1/videos", formData, {
+      await axios.post("http://localhost:8080/api/v1/videos", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
         onUploadProgress: (progressEvent) => {
-          const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          const progress = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
           setProgress(progress);
         },
       });
-      console.log(response);
+
       setMessage("Archivo subido exitosamente");
       setProgress(0);
       setUpload(false);
       resetForm();
       toast.success("Archivo subido correctamente");
     } catch (error) {
-      console.error('Error al subir el archivo:', error);
+      console.error("Error al subir el archivo:", error);
       setMessage("Error al subir el archivo");
       setProgress(0);
       setUpload(false);
       toast.error("Error al subir el archivo");
     }
-  }
+  };
 
   return (
-    <div className="text-white">
-      <Card className="flex">
-        <h1>Subir Videos</h1>
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-800">
+      <div className="w-full max-w-screen-md p-6 bg-white dark:bg-gray-700 rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-gray-100 text-center">
+          Subir Video
+        </h2>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="mb-2 block">
+          <div>
             <Label value="Título del Video" />
             <TextInput
               value={meta.title}
               placeholder="Ingrese el título del video"
               name="title"
               onChange={handleFieldChange}
+              required
             />
           </div>
-
-          <div className="max-w-md">
-            <div className="mb-2 block">
-              <Label htmlFor="description" value="Descripción del Video" />
-            </div>
+          <div>
+            <Label htmlFor="description" value="Descripción del Video" />
             <Textarea
               value={meta.description}
               id="description"
@@ -121,8 +133,7 @@ export default function VideoStreaming() {
               onChange={handleFieldChange}
             />
           </div>
-
-          <div className="mb-4">
+          <div>
             <Label htmlFor="categoryId" value="Categoría" />
             <Select
               id="categoryId"
@@ -141,10 +152,13 @@ export default function VideoStreaming() {
               ))}
             </Select>
           </div>
-
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-4">
             <div className="shrink-0">
-              <img className="h-16 w-16 object-cover" src={VideoLogo} alt="Video preview" />
+              <img
+                className="h-16 w-16 object-cover"
+                src={VideoLogo}
+                alt="Video preview"
+              />
             </div>
             <label className="block">
               <span className="sr-only">Seleccione un archivo</span>
@@ -158,38 +172,30 @@ export default function VideoStreaming() {
               />
             </label>
           </div>
-
-          <div>
-            {upload && (
-              <Progress progress={progress} textLabel="Subiendo..." size="lg" labelProgress labelText />
-            )}
-          </div>
-
-          <div>
-            {message &&
-              (message === "Archivo subido exitosamente" ? (
-                <Alert
-                  color="success"
-                  rounded
-                  withBorderAccent
-                  onDismiss={() => setMessage("")}
-                >
-                  <span className="font-medium">¡Éxito!</span> {message}
-                </Alert>
-              ) : (
-                <Alert color="failure">
-                  <span className="font-medium">¡Error!</span> {message}
-                </Alert>
-              ))}
-          </div>
-
-          <div className="flex justify-center">
-            <Button disabled={upload} type="submit">
-              Subir
-            </Button>
-          </div>
+          {upload && (
+            <Progress
+              progress={progress}
+              textLabel="Subiendo..."
+              size="lg"
+              labelProgress
+              labelText
+            />
+          )}
+          {message && (
+            <Alert
+              color={message.includes("exitosamente") ? "success" : "failure"}
+            >
+              <span className="font-medium">
+                {message.includes("exitosamente") ? "¡Éxito!" : "¡Error!"}
+              </span>{" "}
+              {message}
+            </Alert>
+          )}
+          <Button disabled={upload} type="submit" className="w-full">
+            Subir Video
+          </Button>
         </form>
-      </Card>
+      </div>
     </div>
   );
 }
