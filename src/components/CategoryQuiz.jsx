@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { Button, Label, Radio } from "flowbite-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Toaster, toast } from "react-hot-toast";
-import stringSimilarity from "string-similarity"; // Importar la librería
+import stringSimilarity from "string-similarity";
 
 const questions = [
   {
@@ -66,7 +65,6 @@ const questions = [
   },
 ];
 
-// Categorías válidas
 const validCategories = ["Acción", "Aventura", "Comedia", "Drama", "Fantasía", "Terror"];
 
 export default function CategoryQuiz() {
@@ -74,6 +72,9 @@ export default function CategoryQuiz() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(false);
+  const [isAddingToFavorites, setIsAddingToFavorites] = useState(false);
+  const [feedbackMessage, setFeedbackMessage] = useState(""); // Para mostrar mensajes
+  const [messageType, setMessageType] = useState(""); // 'success' o 'error'
   const navigate = useNavigate();
   const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
 
@@ -110,13 +111,10 @@ export default function CategoryQuiz() {
         }
       );
 
-      // Obtener la respuesta de la IA
       const aiResponse = response.data.choices[0].message.content.trim();
-
-      // Validar la categoría más cercana
       const bestMatch = stringSimilarity.findBestMatch(aiResponse, validCategories).bestMatch.target;
 
-      setResult(bestMatch); // Almacenar la categoría válida
+      setResult(bestMatch);
     } catch (err) {
       console.error("Error al interactuar con OpenAI:", err);
       setError(true);
@@ -132,9 +130,15 @@ export default function CategoryQuiz() {
   };
 
   const handleAddToFavorites = async () => {
+    if (isAddingToFavorites) return;
+    setIsAddingToFavorites(true);
+    setFeedbackMessage(""); // Resetear mensaje de retroalimentación
+
     const userId = localStorage.getItem("userId");
     if (!userId) {
-      toast.error("Error: Usuario no autenticado.");
+      setFeedbackMessage("Error: Usuario no autenticado.");
+      setMessageType("error");
+      setIsAddingToFavorites(false);
       return;
     }
 
@@ -149,11 +153,15 @@ export default function CategoryQuiz() {
         }
       );
 
-      toast.success("Categoría agregada a favoritos correctamente.");
+      setFeedbackMessage("Categoría agregada a favoritos correctamente.");
+      setMessageType("success");
     } catch (err) {
       console.error("Error al agregar a favoritos:", err);
-      toast.error("Error al agregar la categoría a favoritos.");
+      setFeedbackMessage("Error al agregar la categoría a favoritos.");
+      setMessageType("error");
     }
+
+    setIsAddingToFavorites(false);
   };
 
   return (
@@ -167,12 +175,25 @@ export default function CategoryQuiz() {
             <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
               Categoría Recomendada: <span className="text-blue-500">{result}</span>
             </h3>
+            {feedbackMessage && (
+              <p
+                className={`text-sm ${
+                  messageType === "success" ? "text-green-500" : "text-red-500"
+                }`}
+              >
+                {feedbackMessage}
+              </p>
+            )}
             <div className="flex justify-center space-x-4">
               <Button onClick={handleCategoryClick}>
                 {error ? "Reintentar" : "Ver películas de esa categoría"}
               </Button>
-              <Button color="success" onClick={handleAddToFavorites}>
-                Agregar categoría a favoritos
+              <Button
+                color="success"
+                onClick={handleAddToFavorites}
+                disabled={isAddingToFavorites}
+              >
+                {isAddingToFavorites ? "Agregando..." : "Agregar categoría a favoritos"}
               </Button>
             </div>
           </div>
@@ -207,7 +228,6 @@ export default function CategoryQuiz() {
           </form>
         )}
       </div>
-      <Toaster position="top-right" />
     </div>
   );
 }

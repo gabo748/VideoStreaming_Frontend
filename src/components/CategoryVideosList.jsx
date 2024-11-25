@@ -48,7 +48,8 @@ export default function CategoryVideosList({ onPlay }) {
           <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
             Videos de la Categoría: {category}
           </h2>
-          <Button onClick={() => navigate("/category-quiz")}>Sugerir Otra Categoría</Button>
+          {/* Cambiar texto del botón y acción */}
+          <Button onClick={() => navigate("/videos")}>Volver a la lista de todas las películas</Button>
         </div>
         <table className="table-auto w-full text-left border-collapse border border-gray-300 dark:border-gray-600">
           <thead className="bg-gray-100 dark:bg-gray-600">
