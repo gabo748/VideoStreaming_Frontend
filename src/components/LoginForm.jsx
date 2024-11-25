@@ -24,9 +24,16 @@ export default function LoginForm() {
           },
         }
       );
-      console.log(response.data);
+
+      const { id, email } = response.data;
+
+      // Almacenar en localStorage
+      localStorage.setItem("userId", id);
+      localStorage.setItem("userEmail", email);
+
       setMessage("Inicio de sesión exitoso");
-      // Redirigir al usuario a la lista de videos
+
+      // Redirigir al usuario a la lista de videos después de un pequeño retraso
       setTimeout(() => navigate("/videos"), 1500);
     } catch (error) {
       console.error(error);
