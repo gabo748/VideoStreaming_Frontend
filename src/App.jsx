@@ -4,6 +4,8 @@ import VideoStreaming from "./components/VideoStreaming";
 import VideoList from "./components/VideoList";
 import LoginForm from "./components/LoginForm";
 import RegisterForm from "./components/RegisterForm";
+import CategoryQuiz from "./components/CategoryQuiz"; // Importar el componente de la encuesta
+import CategoryVideosList from "./components/CategoryVideosList.jsx"; // Importar el componente para videos por categoría
 import { Toaster } from "react-hot-toast";
 
 function App() {
@@ -30,6 +32,13 @@ function App() {
                 />
               </div>
             }
+          />
+          {/* Ruta para la encuesta */}
+          <Route path="/category-quiz" element={<CategoryQuiz />} />
+
+          <Route
+            path="/videos/category/:category"
+            element={<CategoryVideosList onPlay={setVideoId} />}
           />
         </Routes>
       </div>
