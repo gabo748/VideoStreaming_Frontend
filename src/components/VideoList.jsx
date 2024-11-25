@@ -28,10 +28,10 @@ export default function VideoList({ onPlay }) {
     <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-800">
       <div className="w-full max-w-screen-lg p-6 bg-white dark:bg-gray-700 rounded-lg shadow-md">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Video List</h2>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Todos las peliculas</h2>
           <div className="flex space-x-4">
             <Button onClick={() => navigate("/category-quiz")}>Sugerir Películas</Button>
-            <Button onClick={() => navigate("/upload")}>Upload Video</Button>
+            <Button onClick={() => navigate("/upload")}>Subir Trailer</Button>
             <Button onClick={() => navigate("/favorites")}>Ver mis favoritas</Button>
           </div>
         </div>
