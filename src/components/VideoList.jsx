@@ -32,6 +32,7 @@ export default function VideoList({ onPlay }) {
           <div className="flex space-x-4">
             <Button onClick={() => navigate("/category-quiz")}>Sugerir Películas</Button>
             <Button onClick={() => navigate("/upload")}>Upload Video</Button>
+            <Button onClick={() => navigate("/favorites")}>Ver mis favoritas</Button>
           </div>
         </div>
         <table className="table-auto w-full text-left border-collapse border border-gray-300 dark:border-gray-600">

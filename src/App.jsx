@@ -6,6 +6,7 @@ import LoginForm from "./components/LoginForm";
 import RegisterForm from "./components/RegisterForm";
 import CategoryQuiz from "./components/CategoryQuiz"; // Importar el componente de la encuesta
 import CategoryVideosList from "./components/CategoryVideosList.jsx"; // Importar el componente para videos por categoría
+import FavoriteList from "./components/FavoriteList"; // Importar el componente para la lista de favoritas
 import { Toaster } from "react-hot-toast";
 
 function App() {
@@ -36,10 +37,14 @@ function App() {
           {/* Ruta para la encuesta */}
           <Route path="/category-quiz" element={<CategoryQuiz />} />
 
+          {/* Ruta para videos por categoría */}
           <Route
             path="/videos/category/:category"
             element={<CategoryVideosList onPlay={setVideoId} />}
           />
+
+          {/* Ruta para ver las categorías favoritas */}
+          <Route path="/favorites" element={<FavoriteList />} />
         </Routes>
       </div>
       <Toaster />
